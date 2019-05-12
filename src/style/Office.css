@@ -1,0 +1,65 @@
+.Box {
+    width: 100%;
+    /* padding: 10%; */
+    border: 2px solid #0AB168;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, .1), 0 2px 4px 1px rgba(0, 0, 0, .10);
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 14px;
+    color: rgba(0, 0, 0, 0.73)
+}
+
+.Box input {
+    width: 100%;
+    border: none;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 15px;
+    color: rgba(0, 0, 0, 0.73);
+    padding: 7px 5px;
+    box-sizing: border-box;
+    outline: none;
+}
+
+.Box ul {
+    list-style-type: none;
+    text-align: left;
+    margin: 0;
+    padding: 0;
+    /*border-top: 1px solid lightskyblue;*/
+}
+
+.Box ul::before {
+    content: "";
+}
+
+.Box li {
+    padding: 10px 5px;
+    cursor: pointer;
+    border-top: 1px solid white;
+    /*background-color: rgba(128, 128, 128, 0.20);*/
+    background-color: rgb(148, 151, 144);
+}
+
+.Box li:hover {
+    /*background-color: rgb(99, 151, 105);*/
+    background-color: rgb(8, 153, 91);
+    color: white;
+}
+
+/*
+@media (max-width: 768px) {
+    .Box {
+        border: 1px solid rgb(99, 106, 110);
+        font-size: 2.5rem;
+    }
+
+    .Box input {
+        padding: 40px 5px;
+        font-size: 3rem;
+    }
+
+    .Box li {
+        margin: 5px 0 0 0;
+        padding: 20px 5px;
+        border-top: 5px solid white;
+    }
+}*/
