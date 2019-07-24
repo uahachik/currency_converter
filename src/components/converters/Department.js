@@ -1,17 +1,26 @@
-import React, {Component} from 'react'
+import React, { Component } from 'react';
+// import { LocalContext } from './context';
+import '../../style/Office.css';
 import Office from './Office';
-import '../style/Office.css'
+import Spinner from '../layout/Spinner';
 
 class Department extends Component {
-    state = {
-        error: null,
-        isLoading: true,
-        items: [],
-        change: '1',
-        amount: '',
-        currency_1: '',
-        currency_2: ''
-    };
+    constructor(props) {
+        super(props);
+        this.state = {
+            error: null,
+            isLoading: true,
+            items: [],
+            change: '1',
+            amount: '',
+            currency_1: '',
+            currency_2: ''
+        };
+        this.handleAmount_1Change = this.handleAmount_1Change.bind(this);
+        this.handleAmount_2Change = this.handleAmount_2Change.bind(this);
+        this.handleCurrency_1Change = this.handleCurrency_1Change.bind(this);
+        this.handleCurrency_2Change = this.handleCurrency_2Change.bind(this);
+    }
 
     componentDidMount() {
         const hryvnia = {
@@ -34,71 +43,57 @@ class Department extends Component {
             .catch(error => this.setState({error, isLoading: false}));
     }
 
-    handleChange_1Change = (amount) => {
+    handleAmount_1Change(amount) {
         this.setState({change: '1', amount})
     }
-    handleChange_2Change = (amount) => {
+    handleAmount_2Change(amount) {
         this.setState({change: '2', amount})
     }
-    handleCurrency_1Change = (currency) => {
+    handleCurrency_1Change(currency) {
         this.setState({currency_1: currency})
     }
-    handleCurrency_2Change = (currency) => {
+    handleCurrency_2Change(currency) {
         this.setState({currency_2: currency})
     }
 
     render() {
         const {isLoading, items, error, change, amount, currency_1, currency_2} = this.state;
 
-        // conditions for change
-        const officeUser_1 = (data, currency) => {
+        // conditions for change and rates of currencies
+        const officeUser_1 = () => {
             if (!(currency_1 && currency_2)) {
                 return '';
             }
-            const office_1 = items.filter(item => item.txt === currency_1);
-            const rate_1 = office_1.map(item => item.rate);
-            return rate_1;
+            const [rate_1] = items.filter(item => item.txt === currency_1);
+            return rate_1.rate;
         }
-        const officeUser_2 = (data, currency) => {
+        const officeUser_2 = () => {
             if (!(currency_1 && currency_2)) {
                 return '';
             }
-            const office_2 = items.filter(item => item.txt === currency_2);
-            const rate_2 = office_2.map(item => item.rate);
-            return rate_2;
+            const [rate_2] = items.filter(item => item.txt === currency_2);
+            return rate_2.rate;
         }
 
-        //change
-        const toChange_1 = (change_2, user1, user2) => {
+        // Math Convert
+        const toConvert_1 = (change_2, office_1, office_2) => {
             return (change_2 * officeUser_2()) / officeUser_1();
         };
-        const toChange_2 = (change_1, user1, user2) => {
+        const toConvert_2 = (change_1, user1, user2) => {
             return (change_1 * officeUser_1()) / officeUser_2();
         };
 
         const tryConvert = (amount, convert) => {
             const input = parseFloat(amount);
-            if (Number.isNaN(input)) {
-                return '';
-            }
             const output = convert(input);
             const rounded = (Math.round(output * 100) / 100).toFixed(2);
             return rounded.toString();
         };
 
-        const change_1 = change === '2' ? tryConvert(amount, toChange_1) : amount;
-        const change_2 = change === '1' ? tryConvert(amount, toChange_2) : amount;
+        const change_1 = change === '2' ? tryConvert(amount, toConvert_1) : amount;
+        const change_2 = change === '1' ? tryConvert(amount, toConvert_2) : amount;
 
-        const data = data => {
-            return items.map(item => item.r030 === 840 ? item.exchangedate : '')
-            // items.forEach((item) => {
-            //     // if(item.r030 === 840) {
-            //     //     var day = item.exchangedate
-            //     // }
-            //     // console.log(item.r030 === 840 ? item.exchangedate : '');
-            //     return item.r030 === 840 ? item.exchangedate : '';
-            // })
-        }
+        const date = items.map(item => item.r030 === 840 ? item.exchangedate : null);
 
         return (
             <React.Fragment>
@@ -107,7 +102,7 @@ class Department extends Component {
                 {/* Here's the data check*/}
                 {!isLoading ? (
                     <React.Fragment>
-                        <h4 className="Items-Data"> as at {data()}</h4>
+                        <h4 className="Items-Data"> as at {date}</h4>
                         <div className="App-Container">
                             <div className="App-Component">
                                 <div className="Box">
@@ -115,8 +110,9 @@ class Department extends Component {
                                         items={items}
                                         amount={change_1}
                                         // currency={currency_1}
-                                        onAmountChange={this.handleChange_1Change}
-                                        onCurrencyChange={this.handleCurrency_1Change}/>
+                                        amountChanged={this.handleAmount_1Change}
+                                        currencyChanged={this.handleCurrency_1Change}
+                                    />
                                 </div>
                             </div>
                             <h2>=</h2>
@@ -126,8 +122,9 @@ class Department extends Component {
                                         items={items}
                                         amount={change_2}
                                         // currency={currency_2}
-                                        onAmountChange={this.handleChange_2Change}
-                                        onCurrencyChange={this.handleCurrency_2Change}/>
+                                        amountChanged={this.handleAmount_2Change}
+                                        currencyChanged={this.handleCurrency_2Change}
+                                    />
                                 </div>
                             </div>
                         </div>
@@ -135,6 +132,7 @@ class Department extends Component {
                 ) : (
                     // If there is a delay in data, let's let the user know it's loading
                     <h3>Loading...</h3>
+                    // <Spinner/>
                 )}
                 <p>{items.map(item => item.txt + ', ')}</p>
             </React.Fragment>
