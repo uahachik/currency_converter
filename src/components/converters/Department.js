@@ -30,7 +30,7 @@ class Department extends Component {
             cc: "UAH",
             exchangedate: "forever"
         }
-        this.itemsList = fetch('https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?json')
+        this.itemsList = fetch('https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?date=20190804&json')
             .then(response => response.json())
             .then(
                 (data) => {
